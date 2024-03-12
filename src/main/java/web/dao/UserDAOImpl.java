@@ -26,35 +26,27 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public void updateUser(User user, int id) {
-        User userFromDB = showUser(id);
-
-        userFromDB.setName(user.getName());
-        userFromDB.setSurname(user.getSurname());
-        userFromDB.setAge(user.getAge());
-
-        entityManager.merge(userFromDB);
+    public void updateUser(User user) {
+        entityManager.merge(user);
 
     }
 
     @Override
     public User showUser(int id) {
-        return entityManager.createQuery("from User where id=:id", User.class)
-                .setParameter("id", id)
-                .getSingleResult();
+        return entityManager.find(User.class, id);
     }
 
     @Override
     public void deleteUser(int id) {
-        User userFromDB = showUser(id);
-
-        entityManager.remove(userFromDB);
+        entityManager.createQuery("delete from User where id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
 
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<User> listUsers() {
-        return entityManager.createQuery("select user From User user ").getResultList();
+        return entityManager.createQuery("from User ").getResultList();
     }
 }
